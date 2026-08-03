@@ -566,7 +566,7 @@
     },
     {
       "input": "testcase-16-isduba-2026-001.json",
-      "desc": "Secondly •14(/document/distribution/tlp/label) s3: no tlp becomes CLEAR with warning",
+      "desc": "Secondly •13(/document/distribution/tlp/label) s3: no tlp becomes CLEAR with warning",
       "requirement_level": "SHOULD",
       "asserts": [
         {
@@ -607,7 +607,7 @@
     },
     {
       "input": "testcase-18-isduba-2026-001.json",
-      "desc": "Secondly •23(/vulnerabilities[]/remediations[]) ◦1: remediation vendor_fix conversion to optional_patch when product is Not Affected",
+      "desc": "Secondly •25(/vulnerabilities[]/remediations[]) ◦1: remediation vendor_fix conversion to optional_patch when product is Not Affected",
       "asserts": [
         {
           "type": "warningmsg",
@@ -634,7 +634,7 @@
     },
     {
       "input": "testcase-19-a-isduba-2026-001.json",
-      "desc": "Secondly •12(/document/category) s2 ◦1: if the English title starts with 'Superseded', the document must become a document with the profile 'Superseded'",
+      "desc": "Secondly •11(/document/category) s2 ◦1: if the English title starts with 'Superseded', the document must become a document with the profile 'Superseded'",
       "asserts": [
         {
           "type": "jsonpath",
@@ -651,7 +651,7 @@
     },
     {
       "input": "testcase-19-b-isduba-2026-001.json",
-      "desc": "Secondly •12(/document/category) s2 ◦2: if the English title starts with 'Withdrawn', the document must become a document with the profile 'Withdrawn'",
+      "desc": "Secondly •11(/document/category) s2 ◦2: if the English title starts with 'Withdrawn', the document must become a document with the profile 'Withdrawn'",
       "asserts": [
         {
           "type": "jsonpath",
@@ -668,7 +668,7 @@
     },
     {
       "input": "isduba-2026-001.json",
-      "desc": "Secondly •13(/document/csaf_version): document version update to 2.1",
+      "desc": "Secondly •12(/document/csaf_version): document version update to 2.1",
       "asserts": [
         {
           "type": "jsonpath",
@@ -685,7 +685,7 @@
     },
     {
       "input": "isduba-2026-001.json",
-      "desc": "Secondly •14(/document/distribution/tlp/label) s1: TLP update from WHITE to CLEAR",
+      "desc": "Secondly •13(/document/distribution/tlp/label) s1: TLP update from WHITE to CLEAR",
       "asserts": [
         {
           "type": "jsonpath",
@@ -702,7 +702,7 @@
     },
     {
       "input": "testcase-20-isduba-2026-001.json",
-      "desc": "Secondly •15(/document/license_expression): conversion of document/notes with valid SPDX license with category legal_disclaimer into /document/license_expression",
+      "desc": "Secondly •14(/document/license_expression): conversion of document/notes with valid SPDX license with category legal_disclaimer into /document/license_expression",
       "asserts": [
         {
           "type": "jsonpath",
@@ -719,7 +719,7 @@
     },
     {
       "input": "testcase-21-isduba-2026-001.json",
-      "desc": "Secondly •19(/vulnerabilities[]/disclosure_date): release_date converted into disclosure_date,
+      "desc": "Secondly •20(/vulnerabilities[]/disclosure_date): release_date converted into disclosure_date",
       "asserts": [
         {
           "type": "jsonpath",
@@ -736,7 +736,7 @@
     },
     {
       "input": "testcase-22-isduba-2026-001.json",
-      "desc": "Secondly •23(/vulnerabilities[]/remediations[]) ◦2: /vulnerabilities[]/remediations[]: none_available converted to fix_planned due to future or undated vendor_fix",
+      "desc": "Secondly •25(/vulnerabilities[]/remediations[]) ◦2: /vulnerabilities[]/remediations[]: none_available converted to fix_planned due to future or undated vendor_fix",
       "asserts": [
         {
           "type": "warningmsg",
@@ -797,7 +797,7 @@
     },
     {
       "input": "testcase-25-g-isduba-2026-001.json",
-      "desc": "Secondly •14(/document/distribution/tlp/label) s1: preserve TLP:GREEN during conversion",
+      "desc": "Secondly •13(/document/distribution/tlp/label) s1: preserve TLP:GREEN during conversion",
       "asserts": [
         {
           "type": "jsonpath",
@@ -814,7 +814,7 @@
     },
     {
       "input": "testcase-25-a-isduba-2026-001.json",
-      "desc": "Secondly •14(/document/distribution/tlp/label) s1: preserve TLP:AMBER during conversion",
+      "desc": "Secondly •13(/document/distribution/tlp/label) s1: preserve TLP:AMBER during conversion",
       "asserts": [
         {
           "type": "jsonpath",
@@ -831,7 +831,7 @@
     },
     {
       "input": "testcase-25-r-isduba-2026-001.json",
-      "desc": "Secondly •14(/document/distribution/tlp/label) s1: preserve TLP:RED during conversion",
+      "desc": "Secondly •13(/document/distribution/tlp/label) s1: preserve TLP:RED during conversion",
       "asserts": [
         {
           "type": "jsonpath",
@@ -848,7 +848,7 @@
     },
     {
       "input": "testcase-23-isduba-2026-001.json",
-      "desc": "Secondly •23(/vulnerabilities[]/remediations[]) ◦3: /vulnerabilities[]/remediations[] product removed from none_available because a vendor_fix date is known",
+      "desc": "Secondly •25(/vulnerabilities[]/remediations[]) ◦3: /vulnerabilities[]/remediations[] product removed from none_available because a vendor_fix date is known",
       "asserts": [
         {
           "type": "warningmsg",
