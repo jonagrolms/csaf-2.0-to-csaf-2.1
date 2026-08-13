@@ -18,13 +18,14 @@
 
     "converter_tests": { "type": "array", "minItems": 1, "uniqueItems": true,
       "items": { "type": "object",
-        "required": [ "asserts", "desc", "input" ],
+        "required": [ "asserts", "is_testing", "input" ],
         "properties": {
           "input": { "type": "string", "pattern": "^[\\S](.*[\\S])?.json$",
                      "description": "Input filename for the converter" },
 
-          "desc": { "type": "string", "minLength": 3,
-                    "description": "Description of the test case" },
+          "is_testing": { "type": "array", "items": { "type": "string" }, "minItems": 1,
+                           "description": "Specification requirements the test case covers." },
+          "remark": { "type": "string", "description": "Remark on the test case." },
 
           "requirement_level": { "enum": [ "MUST", "SHOULD", "MAY" ],
                                  "description": "Requirement level of the test case, expressing in three RFC2119 terms. If not given, default is `MUST`."},
