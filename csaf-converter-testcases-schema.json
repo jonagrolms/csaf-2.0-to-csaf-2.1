@@ -23,8 +23,9 @@
           "input": { "type": "string", "pattern": "^[\\S](.*[\\S])?.json$",
                      "description": "Input filename for the converter" },
 
-          "is_testing": { "type": "array", "items": { "type": "string" }, "minItems": 1,
+          "is_testing": { "type": "array", "items": { "$ref": "#/$defs/selector" }, "minItems": 1,
                            "description": "Specification requirements the test case covers." },
+
           "remark": { "type": "string", "description": "Remark on the test case." },
 
           "requirement_level": { "enum": [ "MUST", "SHOULD", "MAY" ],
@@ -70,6 +71,27 @@
           }
         }
       }
+    }
+  },
+  "$defs": {
+    "locator": { "type": "string",
+                 "pattern": "^[A-Za-z]+ly(?: (?:[•◦▪][1-9][0-9]*|(?:[1-9][0-9]*|[a-z])\\.)(?:\\([^()]+\\))?)+$" },
+
+    "textSelection": {
+      "type": "array",
+      "prefixItems": [{ "type": "string", "minLength": 1 }, { "type": "integer", "minimum": 1 }],
+      "minItems": 1, "maxItems": 2, "items": false
+    },
+
+    "coverage": { "type": "integer", "minimum": 0, "maximum": 100 },
+
+    "selector": {
+      "oneOf": [
+        { "type": "array", "prefixItems": [{ "$ref": "#/$defs/locator" }], "minItems": 1, "maxItems": 1, "items": false },
+        { "type": "array", "prefixItems": [{ "$ref": "#/$defs/locator" }, { "$ref": "#/$defs/textSelection" }], "minItems": 2, "maxItems": 2, "items": false },
+        { "type": "array", "prefixItems": [{ "$ref": "#/$defs/locator" }, { "$ref": "#/$defs/coverage" }], "minItems": 2, "maxItems": 2, "items": false },
+        { "type": "array", "prefixItems": [{ "$ref": "#/$defs/locator" }, { "$ref": "#/$defs/textSelection" }, { "$ref": "#/$defs/coverage" }], "minItems": 3, "maxItems": 3, "items": false }
+      ]
     }
   }
 }
