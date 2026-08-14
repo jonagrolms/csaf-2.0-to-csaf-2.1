@@ -4,7 +4,7 @@
   "converter_tests": [
     {
       "input": "testcase-1-20260311-1512-isduba-2026-001.json",
-      "is_testing": ["Firstly •3"],
+      "is_testing": [["Firstly •3"]],
       "remark": "testing the removal of an additional property",
       "asserts": [
         {
@@ -29,7 +29,7 @@
     },
     {
       "input": "testcase-2-20260312-1651-isduba-2025-01.json",
-      "is_testing": ["Secondly •1 s1-2"],
+      "is_testing": [["Secondly •1", ["value type string with format date-time: If the value contains a 60 in the seconds place, the CSAF 2.0 to CSAF 2.1 Converter MUST replace the seconds and their fractions with 59.999999. In addition, the converter outputs a warning that leap seconds are now prohibited in CSAF and the value has been replaced.", 1]]],
       "remark": "leap second replacement and warning. Test only uses three paths as samples to be tested from the 12 paths given in CSAF 2.1-csd02 6.1.37 that can have date-time values.",
       "asserts": [
         { "type": "warningmsg",
@@ -60,7 +60,7 @@
     },
     {
       "input": "testcase-3-20260313-1429-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦1"],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦1"]],
       "remark": "replace product category legacy",
       "asserts": [
         {
@@ -88,7 +88,7 @@
     },
     {
       "input": "testcase-4-20260323-1146-isduba-2025-01.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) sect 4"],
+      "is_testing": [["Secondly •2 ◦2", ["If the CSAF 2.0 to CSAF 2.1 Converter is unable to create a valid product tree, it MUST output an error that an invalid product tree with stacked branch categories was detected and could not be resolved. Such a error MUST include the invalid path as well as the branch categories that were present multiple times. A tool MAY provide a non-default option to output the invalid document.", 1]]],
       "remark": "Converter cannot create a valid product tree by itself.\nThe category 'vendor' appears twice in the same path (aka it is stacked). Both names are not in the list to be removed by 'Secondly •2(/$defs/branches_t) ◦2' transformation rules.",
       "asserts": [
         {
@@ -112,7 +112,7 @@
     },
     {
       "input": "testcase-4-2-20260323-1146-isduba-2025-01.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦2 a."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦2 1."]],
       "remark": "The category 'vendor' appears three time in the same path (aka 'it is stacked'). Two names are in the list to be removed, so this can be resolved.",
       "asserts": [
         {
@@ -145,7 +145,7 @@
     },
     {
       "input": "testcase-1-20260311-1512-isduba-2026-001.json",
-      "is_testing": ["Secondly •16(/document/publisher/category) s1"],
+      "is_testing": [["Secondly •16", ["/document/publisher/category: If the value is other, the CSAF 2.0 to CSAF 2.1 Converter SHOULD output a warning that some parties have been regrouped into the new value multiplier.", 1]]],
       "remark": "Testing SHOULD warning for /document/publisher/category == 'other'",
       "requirement_level": "SHOULD",
       "asserts": [
@@ -164,7 +164,7 @@
     },
     {
       "input": "testcase-5-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦3 a."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦3 1."]],
       "remark": "resolve product_name.product_version.product_version_range",
       "asserts": [
         {
@@ -197,7 +197,7 @@
     },
     {
       "input": "testcase-6-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦3 b."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦3 b."]],
       "remark": "resolve product_version before product_version_range after product_family",
       "asserts": [
         {
@@ -223,7 +223,7 @@
     },
     {
       "input": "testcase-7-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦4 a."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦4 a."]],
       "remark": "resolve upper open ended range with single version constraint",
       "asserts": [
         {
@@ -248,7 +248,7 @@
     },
     {
       "input": "testcase-8-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦4 b."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦4 b."]],
       "remark": "resolve upper open ended range with more than one version constraints",
       "asserts": [
         {
@@ -266,7 +266,7 @@
     },
     {
       "input": "testcase-9-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦5 a."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦5 a."]],
       "remark": "resolve product_version_range containing single version in vers format",
       "asserts": [
         {
@@ -293,7 +293,7 @@
     },
     {
       "input": "testcase-10-isduba-2026-001.json",
-      "is_testing": ["Secondly •2(/$defs/branches_t) ◦5 b."],
+      "is_testing": [["Secondly •2(/$defs/branches_t) ◦5 b."]],
       "remark": "resolve product_version_range containing single version in vls format",
       "asserts": [
         {
@@ -320,7 +320,7 @@
     },
     {
       "input": "testcase-11-isduba-2026-001.json",
-      "is_testing": ["Secondly •3(/$defs/full_product_name_t/product_identification_helper/cpe)"],
+      "is_testing": [["Secondly •3(/$defs/full_product_name_t/product_identification_helper/cpe)"]],
       "remark": "ensure removal of invalid CPE string",
       "requirement_level": "SHOULD",
       "asserts": [
@@ -345,7 +345,7 @@
     },
     {
       "input": "testcase-12-isduba-2026-001.json",
-      "is_testing": ["Secondly •4(/$defs/full_product_name_t/product_identification_helper/hashes[]/file_hashes[]/algorithm)"],
+      "is_testing": [["Secondly •4(/$defs/full_product_name_t/product_identification_helper/hashes[]/file_hashes[]/algorithm)"]],
       "remark": "resolve unknown hash algorithm and convert it to lowercase",
       "asserts": [
         {
@@ -375,7 +375,7 @@
     },
     {
       "input": "testcase-13-isduba-2026-001.json",
-      "is_testing": ["Secondly •5(/$defs/full_product_name_t/product_identification_helper/hashes[]/file_hashes[]/value)"],
+      "is_testing": [["Secondly •5(/$defs/full_product_name_t/product_identification_helper/hashes[]/file_hashes[]/value)"]],
       "remark": "force hash value into lowercase",
       "asserts": [
         {
@@ -396,7 +396,7 @@
     },
     {
       "input": "testcase-14-isduba-2026-001.json",
-      "is_testing": ["Secondly •7(/$defs/full_product_name_t/product_identification_helper/purls)"],
+      "is_testing": [["Secondly •7(/$defs/full_product_name_t/product_identification_helper/purls)"]],
       "remark": "conversion of single purl to purls array",
       "asserts": [
         {
@@ -414,7 +414,7 @@
     },
     {
       "input": "testcase-15-a-isduba-2026-001.json",
-      "is_testing": ["Secondly •6(/$defs/full_product_name_t/product_identification_helper/model_numbers[])"],
+      "is_testing": [["Secondly •6(/$defs/full_product_name_t/product_identification_helper/model_numbers[])"]],
       "remark": "model_numbers: add * if not exists, remove entries with multiple unescaped *, escape backslashes",
       "requirement_level": "SHOULD",
       "asserts": [
@@ -444,7 +444,7 @@
     },
     {
       "input": "testcase-15-b-isduba-2026-001.json",
-      "is_testing": ["Secondly •8(/$defs/full_product_name_t/product_identification_helper/serial_numbers[])"],
+      "is_testing": [["Secondly •8(/$defs/full_product_name_t/product_identification_helper/serial_numbers[])"]],
       "remark": "serial_numbers: add * if not exists, remove entries with multiple unescaped *, escape backslashes",
       "requirement_level": "SHOULD",
       "asserts": [
@@ -474,7 +474,7 @@
     },
     {
       "input": "testcase-15-c-isduba-2026-001.json",
-      "is_testing": ["Secondly •9(/$defs/full_product_name_t/product_identification_helper/skus[])"],
+      "is_testing": [["Secondly •9(/$defs/full_product_name_t/product_identification_helper/skus[])"]],
       "remark": "skus: add * if not exists, remove entries with multiple unescaped *, escape backslashes",
       "requirement_level": "SHOULD",
       "asserts": [
@@ -504,7 +504,7 @@
     },
     {
       "input": "testcase-15-a-1-isduba-2026-001.json",
-      "is_testing": ["Secondly •6(/$defs/full_product_name_t/product_identification_helper/model_numbers[]) ◦3"],
+      "is_testing": [["Secondly •6(/$defs/full_product_name_t/product_identification_helper/model_numbers[]) ◦3"]],
       "remark": "model_numbers: remove entries with multiple unescaped *, escape backslashes",
       "asserts": [
         {
@@ -532,7 +532,7 @@
     },
     {
       "input": "testcase-15-b-1-isduba-2026-001.json",
-      "is_testing": ["Secondly •8(/$defs/full_product_name_t/product_identification_helper/serial_numbers[]) ◦3"],
+      "is_testing": [["Secondly •8(/$defs/full_product_name_t/product_identification_helper/serial_numbers[]) ◦3"]],
       "remark": "serial_numbers: add * if not exists, remove entries with multiple unescaped *, escape backslashes",
       "asserts": [
         {
@@ -560,7 +560,7 @@
     },
     {
       "input": "testcase-15-c-1-isduba-2026-001.json",
-      "is_testing": ["Secondly •9(/$defs/full_product_name_t/product_identification_helper/skus[]) ◦3"],
+      "is_testing": [["Secondly •9(/$defs/full_product_name_t/product_identification_helper/skus[]) ◦3"]],
       "remark": "skus: add * if not exists, remove entries with multiple unescaped *, escape backslashes",
       "asserts": [
         {
@@ -588,7 +588,7 @@
     },
     {
       "input": "testcase-16-isduba-2026-001.json",
-      "is_testing": ["Secondly •13(/document/distribution/tlp/label) s3"],
+      "is_testing": [["Secondly •13", ["If no TLP label was given, the CSAF 2.0 to CSAF 2.1 Converter SHOULD assign TLP:CLEAR and output a warning that the default TLP has been set.", 1]]],
       "remark": "no tlp becomes CLEAR with warning",
       "requirement_level": "SHOULD",
       "asserts": [
@@ -613,7 +613,7 @@
     },
     {
       "input": "testcase-17-isduba-2026-001.json",
-      "is_testing": ["Secondly •17(/document/title)"],
+      "is_testing": [["Secondly •17(/document/title)"]],
       "remark": "remove /document/tracking/id from title",
       "asserts": [
         {
@@ -631,7 +631,7 @@
     },
     {
       "input": "testcase-18-isduba-2026-001.json",
-      "is_testing": ["Secondly •25(/vulnerabilities[]/remediations[]) ◦1"],
+      "is_testing": [["Secondly •25(/vulnerabilities[]/remediations[]) ◦1"]],
       "remark": "remediation vendor_fix conversion to optional_patch when product is Not Affected",
       "asserts": [
         {
@@ -659,7 +659,7 @@
     },
     {
       "input": "testcase-19-a-isduba-2026-001.json",
-      "is_testing": ["Secondly •11(/document/category) s2 ◦1"],
+      "is_testing": [["Secondly •11(/document/category) ◦2 ▪1"]],
       "remark": "if the English title starts with 'Superseded', the document must become a document with the profile 'Superseded'",
       "asserts": [
         {
@@ -677,7 +677,7 @@
     },
     {
       "input": "testcase-19-b-isduba-2026-001.json",
-      "is_testing": ["Secondly •11(/document/category) s2 ◦2"],
+      "is_testing": [["Secondly •11(/document/category) ◦2 ▪2"]],
       "remark": "if the English title starts with 'Withdrawn', the document must become a document with the profile 'Withdrawn'",
       "asserts": [
         {
@@ -695,7 +695,7 @@
     },
     {
       "input": "isduba-2026-001.json",
-      "is_testing": ["Secondly •12(/document/csaf_version)"],
+      "is_testing": [["Secondly •12(/document/csaf_version)"]],
       "remark": "document version update to 2.1",
       "asserts": [
         {
@@ -713,7 +713,7 @@
     },
     {
       "input": "isduba-2026-001.json",
-      "is_testing": ["Secondly •13(/document/distribution/tlp/label) s1"],
+      "is_testing": [["Secondly •13", ["TLP:WHITE TLP:CLEAR", 1]]],
       "remark": "TLP update from WHITE to CLEAR",
       "asserts": [
         {
@@ -731,7 +731,7 @@
     },
     {
       "input": "testcase-20-isduba-2026-001.json",
-      "is_testing": ["Secondly •14(/document/license_expression)"],
+      "is_testing": [["Secondly •14(/document/license_expression)"]],
       "remark": "conversion of document/notes with valid SPDX license with category legal_disclaimer into /document/license_expression",
       "asserts": [
         {
@@ -749,7 +749,7 @@
     },
     {
       "input": "testcase-21-isduba-2026-001.json",
-      "is_testing": ["Secondly •20(/vulnerabilities[]/disclosure_date)"],
+      "is_testing": [["Secondly •20(/vulnerabilities[]/disclosure_date)"]],
       "remark": "release_date converted into disclosure_date",
       "asserts": [
         {
@@ -767,7 +767,7 @@
     },
     {
       "input": "testcase-22-isduba-2026-001.json",
-      "is_testing": ["Secondly •25(/vulnerabilities[]/remediations[]) ◦2"],
+      "is_testing": [["Secondly •25(/vulnerabilities[]/remediations[]) ◦2"]],
       "remark": "/vulnerabilities[]/remediations[]: none_available converted to fix_planned due to future or undated vendor_fix",
       "asserts": [
         {
@@ -795,7 +795,7 @@
     },
     {
       "input": "testcase-24-isduba-2026-001.json",
-      "is_testing": ["Secondly •4(/$defs/full_product_name_t/product_identification_helper/hashes[]/file_hashes[]/algorithm)"],
+      "is_testing": [["Secondly •4(/$defs/full_product_name_t/product_identification_helper/hashes[]/file_hashes[]/algorithm)"]],
       "remark": "canonicalize known hash algorithm spelling",
       "asserts": [
         {
@@ -813,7 +813,7 @@
     },
     {
       "input": "isduba-2026-001.json",
-      "is_testing": ["Secondly •10(/$schema)"],
+      "is_testing": [["Secondly •10(/$schema)"]],
       "remark": "update $schema to CSAF 2.1 schema URI",
       "asserts": [
         {
@@ -831,7 +831,7 @@
     },
     {
       "input": "testcase-25-g-isduba-2026-001.json",
-      "is_testing": ["Secondly •13(/document/distribution/tlp/label) s1"],
+      "is_testing": [["Secondly •13", ["TLP:GREEN TLP:GREEN", 1]]],
       "remark": "preserve TLP:GREEN during conversion",
       "asserts": [
         {
@@ -849,7 +849,7 @@
     },
     {
       "input": "testcase-25-a-isduba-2026-001.json",
-      "is_testing": ["Secondly •13(/document/distribution/tlp/label) s1"],
+      "is_testing": [["Secondly •13", ["TLP:AMBER TLP:AMBER", 1]]],
       "remark": "preserve TLP:AMBER during conversion",
       "asserts": [
         {
@@ -867,7 +867,7 @@
     },
     {
       "input": "testcase-25-r-isduba-2026-001.json",
-      "is_testing": ["Secondly •13(/document/distribution/tlp/label) s1"],
+      "is_testing": [["Secondly •13", ["TLP:RED TLP:RED", 1]]],
       "remark": "preserve TLP:RED during conversion",
       "asserts": [
         {
@@ -885,7 +885,7 @@
     },
     {
       "input": "testcase-23-isduba-2026-001.json",
-      "is_testing": ["Secondly •25(/vulnerabilities[]/remediations[]) ◦3"],
+      "is_testing": [["Secondly •25(/vulnerabilities[]/remediations[]) ◦3"]],
       "remark": "/vulnerabilities[]/remediations[] product removed from none_available because a vendor_fix date is known",
       "asserts": [
         {

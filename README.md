@@ -112,3 +112,21 @@ The test runner implementation therefore needs an RFC 9535 compliant library.
 
 The `requirement_level` of a test is optional to specify if the test
 `MUST`, `SHOULD` or `MAY` succeed; when missing, it MUST.
+
+### pattern for `converter_tests[].is_testing` elements in `converter-testcases-20-21.json`
+
+```
+<locator> ::= <ordinal> " " <list-item> {" " <list-item>}
+<ordinal> ::= "Firstly" | "Secondly" | ... | "Tenthly"
+<list-item> ::= (<bullet-list-item> | <numbered-list-item>) [<attachment>]
+<bullet-list-item> ::= ("•" | "◦" | "▪") <element-number>
+<numbered-list-item> ::= (<element-number> | <lowercase-letter>) "."
+<attachment> ::= "(" <text> ")"
+<text-selection> ::= "'" <text> "'" ["_" <element-number>]
+<element-number> ::= "1" | "2" | ...
+<coverage> ::= "0" | "1" | ... | "100"
+```
+
+The specifiers are applied from left to right, and each specifier is searched for within the range matched by the previous specifier.  
+The `<element-number>` in `<text-selection>` specifies which occurrence of the string it refers to (starting at 1). When referring to the first occurrence this can be dropped.
+In the JSON file the selector is then expressed like this: `[<locator>: string, [<text>: string, <element-number>: integer], <coverage>: integer]`
