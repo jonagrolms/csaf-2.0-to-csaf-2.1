@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-# /// script
-# dependencies = [
-#   "Markdown",
-#   "mdx_truly_sane_lists"
-# ]
-# ///
 
 """Create HTML visualization for CSAF converter-test selectors.
 Has additional options for creating an HTML file with an interactive selector and for testing selector pattern.
