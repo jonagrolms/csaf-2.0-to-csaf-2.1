@@ -298,10 +298,12 @@ def main():
     for (key, value) in stats.items():
         print(key, value)
 
-    print("Description of loaded tests:")
+    print("Details of loaded tests:")
     for i,t in enumerate(tests['converter_tests'], 1):
-        if "desc" in t:
-            print(f"{i:2d}:", t["desc"])
+        if "is_testing" in t:
+            is_testing = ", ".join(t["is_testing"])
+            remark = f": {t["remark"]}" if "remark" in t else ""
+            print(f"{i:2d}:", f"{is_testing}{remark}")
 
 if __name__ == "__main__":
     main()
