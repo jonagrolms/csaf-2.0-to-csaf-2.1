@@ -73,6 +73,19 @@ table {
     margin-top: 6pt;
 }"""
 
+COVERAGE_CSS = """.coverage {
+    background-color: color-mix(
+        in oklch,
+        oklch(0.55 0.12 55) calc(100% - var(--coverage)),
+        oklch(0.76 0.18 140) var(--coverage)
+    );
+}
+.coverage-full {
+    background-color: #60f060;
+}"""
+
+SELECTOR_SCRIPT_PATH = Path(__file__).with_name("selector_script.js")
+
 logger = logging.getLogger(__name__)
 
 
@@ -987,6 +1000,51 @@ def render_markdown_section(
     )
 
 
+def build_html_document(
+    body: str,
+    title: str,
+    additional_css: str = "",
+    script: str | None = None,
+) -> str:
+    """Build a complete visualization document."""
+    styles = "\n".join(part for part in (additional_css, COMMON_CSS) if part)
+    script_element = f"\n<script>\n{script}\n</script>" if script is not None else ""
+    return f"""<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{title}</title>
+<style>
+{styles}
+</style>
+</head>
+<body>
+{body}{script_element}
+</body>
+</html>
+"""
+
+
+def write_html_document(
+    output_file: Path,
+    body: str,
+    title: str,
+    additional_css: str = "",
+    script: str | None = None,
+) -> None:
+    """Build and write a visualization document."""
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(
+        build_html_document(
+            body=body,
+            title=title,
+            additional_css=additional_css,
+            script=script,
+        ),
+        encoding="utf-8",
+    )
+
+
 class Visualizer:
     """Generate an HTML visualization from revision and testcase data."""
 
@@ -1029,8 +1087,16 @@ class Visualizer:
             for selector in testcase.get("is_testing", [])
         )
 
-    def visualize(self, output: Path = Path("output")) -> None:
+    def visualize(
+        self,
+        output: Path = Path("output"),
+        *,
+        include_interactive_selector: bool = False,
+    ) -> None:
         """Write a highlighted HTML visualization for the testcase revision.
+
+        If ``include_interactive_selector`` is true, the document also embeds
+        the interactive selector creator.
 
         No file is written if the target section is absent. The process exits
         with status 1 if revision content cannot be obtained.
@@ -1059,36 +1125,17 @@ class Visualizer:
                     resolved.input_file,
                 )
 
-        output_dir_path = output / revision
-        output_dir_path.mkdir(parents=True, exist_ok=True)
+        if include_interactive_selector:
+            output_name = "marked_interactive_selector.html"
+            title = "CSAF test case visualization and selector"
+            script = SELECTOR_SCRIPT_PATH.read_text(encoding="utf-8")
+        else:
+            output_name = "marked.html"
+            title = "CSAF test case visualization"
+            script = None
 
-        document = f"""<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>CSAF test case visualization</title>
-<style>
-.coverage {{
-    background-color: color-mix(
-        in oklch,
-        oklch(0.55 0.12 55) calc(100% - var(--coverage)),
-        oklch(0.76 0.18 140) var(--coverage)
-    );
-}}
-.coverage-full {{
-    background-color: #60f060;
-}}
-{COMMON_CSS}
-</style>
-</head>
-<body>
-{rendered.html}
-</body>
-</html>
-"""
-
-        output_file = output_dir_path / "marked.html"
-        output_file.write_text(document, encoding="utf-8")
+        output_file = output / revision / output_name
+        write_html_document(output_file, rendered.html, title, COVERAGE_CSS, script)
         logger.info("Visualization for revision '%s' written to '%s'.", revision, output_file)
 
 
@@ -1230,7 +1277,11 @@ def test_command(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
         print(result.match.text)
 
 
-def visualize_command(args: argparse.Namespace) -> None:
+def visualize_command(
+    args: argparse.Namespace,
+    *,
+    include_interactive_selector: bool = False,
+) -> None:
     """Generate the highlighted testcase visualization.
 
     Raises:
@@ -1241,7 +1292,10 @@ def visualize_command(args: argparse.Namespace) -> None:
         SystemExit: If revision content cannot be obtained.
     """
     visualizer = Visualizer(args.revisions, Path(args.testcases))
-    visualizer.visualize(output=Path(args.output))
+    visualizer.visualize(
+        output=Path(args.output),
+        include_interactive_selector=include_interactive_selector,
+    )
 
 
 def interactive_selection_command(args: argparse.Namespace) -> None:
@@ -1267,34 +1321,35 @@ def interactive_selection_command(args: argparse.Namespace) -> None:
         logger.warning("Section with anchor '%s' not found in revision '%s'.", SECTION_ANCHOR, args.revision)
         return
 
-    output_dir_path = Path(args.output) / args.revision
-    output_dir_path.mkdir(parents=True, exist_ok=True)
-
-    document = f"""<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>CSAF test case selector</title>
-<style>
-{COMMON_CSS}
-</style>
-</head>
-<body>
-{rendered.html}
-<script>
-{Path("selector_script.js").read_text(encoding="utf-8")}
-</script>
-</body>
-</html>
-"""
-
-    output_file = output_dir_path / "interactive_selector.html"
-    output_file.write_text(document, encoding="utf-8")
+    output_file = Path(args.output) / args.revision / "interactive_selector.html"
+    write_html_document(
+        output_file,
+        rendered.html,
+        "CSAF test case selector",
+        script=SELECTOR_SCRIPT_PATH.read_text(encoding="utf-8"),
+    )
     logger.info("Visualization for revision '%s' written to '%s'.", args.revision, output_file)
 
 
 def main() -> None:
     """Run the command-line interface."""
+    def add_testcase_visualization_arguments(parser: argparse.ArgumentParser) -> None:
+        """Add arguments shared by testcase-driven visualization commands."""
+        parser.add_argument(
+            "--revisions",
+            type=json.loads,
+            help="JSON dict to map revision key to local or remote Markdown file path or URL",
+            required=False,
+            default=json.dumps(REVISIONS),
+        )
+        parser.add_argument(
+            "--testcases",
+            type=str,
+            help="Path to the JSON file containing test cases",
+            default="converter-testcases-20-21.json",
+        )
+        parser.add_argument("--output", type=str, help="Path to the output directory", default="output")
+
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser(description="Visualizer")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -1311,20 +1366,13 @@ def main() -> None:
     )
 
     visualize_parser = subparsers.add_parser("visualize", help="Visualize selectors")
-    visualize_parser.add_argument(
-        "--revisions",
-        type=json.loads,
-        help="JSON dict to map revision key to local or remote Markdown file path or URL",
-        required=False,
-        default=json.dumps(REVISIONS),
+    add_testcase_visualization_arguments(visualize_parser)
+
+    interactive_visualization_parser = subparsers.add_parser(
+        "interactive-visualization",
+        help="Visualize selectors and enable interactive selector creation",
     )
-    visualize_parser.add_argument(
-        "--testcases",
-        type=str,
-        help="Path to the JSON file containing test cases",
-        default="converter-testcases-20-21.json",
-    )
-    visualize_parser.add_argument("--output", type=str, help="Path to the output directory", default="output")
+    add_testcase_visualization_arguments(interactive_visualization_parser)
 
     interactive_selection_parser = subparsers.add_parser(
         "interactive-selection",
@@ -1353,6 +1401,9 @@ def main() -> None:
 
     test_parser.set_defaults(handler=partial(test_command, parser=parser))
     visualize_parser.set_defaults(handler=visualize_command)
+    interactive_visualization_parser.set_defaults(
+        handler=partial(visualize_command, include_interactive_selector=True)
+    )
     interactive_selection_parser.set_defaults(handler=interactive_selection_command)
 
     args = parser.parse_args()
