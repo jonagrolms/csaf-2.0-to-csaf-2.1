@@ -6,8 +6,6 @@ Use --help for help.
 
 By default when run from the command line the script downloads the CSAF specifications!
 
-Coverage is currently parsed, but then ignored.
-
 SPDX-License-Identifier: Apache-2.0
 SPDX-FileCopyrightText: 2026 German Federal Office for Information Security (BSI) <https://www.bsi.bund.de>
 Software-Engineering: 2026 Intevation GmbH <https://intevation.de>
@@ -287,6 +285,7 @@ class SelectorMatch:
     element: etree.Element  # <li> elem
     text: str
     segments: tuple[TextSegment, ...]
+    coverage: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -411,7 +410,7 @@ class MarkdownSelector:
     @classmethod
     def _parse_coverage(cls, value: object) -> int | None:
         """Parse coverage."""
-        if not isinstance(value, int) or not 0 <= value <= cls.MAX_COVERAGE:
+        if not isinstance(value, int) or isinstance(value, bool):  # bool is a subclass of int
             return None
         return value
 
@@ -723,6 +722,7 @@ class MarkdownSelector:
                 element=selected,
                 text=plain,
                 segments=self._merge_segments(positions),
+                coverage=parsed_selector.coverage if parsed_selector.coverage is not None else self.MAX_COVERAGE,
             )
 
         needle = self._normalize_plain_text(parsed_selector.text_selection.text)
@@ -744,6 +744,7 @@ class MarkdownSelector:
             element=selected,
             text=plain[match_index : match_index + len(needle)],
             segments=self._merge_segments(matched_positions),
+            coverage=parsed_selector.coverage if parsed_selector.coverage is not None else self.MAX_COVERAGE,
         )
 
 
@@ -763,14 +764,17 @@ class _SelectorTreeprocessor(Treeprocessor):
         self.results: tuple[ResolvedSelector, ...] = ()
 
     @staticmethod
-    def _annotation_span(result: ResolvedSelector, text: str) -> etree.Element:
+    def _annotation_span(result: ResolvedSelector, text: str, coverage: int) -> etree.Element:
         """Build a highlight span for a resolved selector."""
+        coverage_class = "coverage-full" if coverage == MarkdownSelector.MAX_COVERAGE else "coverage-partial"
         span = etree.Element(
             "span",
             {
-                "class": "green",
+                "class": f"coverage {coverage_class}",
+                "data-coverage": str(coverage),
                 "data-file": result.input_file,
                 "data-selector": json.dumps(result.selector, ensure_ascii=False),
+                "style": f"--coverage: {coverage}%",
             },
         )
         span.text = text
@@ -782,10 +786,22 @@ class _SelectorTreeprocessor(Treeprocessor):
         active: list[tuple[int, ResolvedSelector]],
     ) -> etree.Element:
         """Nest spans when selector highlights overlap."""
+        coverage_values = [result.match.coverage for _annotation_id, result in active if result.match is not None]
+        total_coverage = sum(coverage_values)
+        coverage = min(max(total_coverage, 0), MarkdownSelector.MAX_COVERAGE)
+        if coverage != total_coverage:
+            logger.warning(
+                "Coverage values %s for highlighted segment %r sum to %d; capped to %d.",
+                coverage_values,
+                text,
+                total_coverage,
+                coverage,
+            )
+
         child: etree.Element | None = None
 
         for _annotation_id, result in sorted(active, reverse=True, key=operator.itemgetter(0)):
-            span = self._annotation_span(result, text if child is None else "")
+            span = self._annotation_span(result, text if child is None else "", coverage)
             if child is not None:
                 span.append(child)
             child = span
@@ -804,14 +820,12 @@ class _SelectorTreeprocessor(Treeprocessor):
     ) -> None:
         """Replace text slot with text and annotation spans."""
         raw = getattr(element, attribute) or ""
-        boundaries = sorted(
-            {
-                0,
-                len(raw),
-                *(start for start, _end, _id, _result in marks),
-                *(end for _start, end, _id, _result in marks),
-            }
-        )
+        boundaries = sorted({
+            0,
+            len(raw),
+            *(start for start, _end, _id, _result in marks),
+            *(end for _start, end, _id, _result in marks),
+        })
 
         head = ""
         nodes: list[etree.Element] = []
@@ -1044,7 +1058,14 @@ class Visualizer:
 <meta charset="utf-8">
 <title>CSAF test case visualization</title>
 <style>
-.green {{
+.coverage {{
+    background-color: color-mix(
+        in oklch,
+        oklch(0.78 0.14 55) calc(100% - var(--coverage)),
+        oklch(0.76 0.12 142) var(--coverage)
+    );
+}}
+.coverage-full {{
     background-color: #60f060;
 }}
 {COMMON_CSS}
