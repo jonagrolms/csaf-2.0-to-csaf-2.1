@@ -785,7 +785,7 @@ class _SelectorTreeprocessor(Treeprocessor):
         text: str,
         active: list[tuple[int, ResolvedSelector]],
     ) -> etree.Element:
-        """Nest spans when selector highlights overlap."""
+        """Nest spans when selector highlights overlap and add tooltips."""
         coverage_values = [result.match.coverage for _annotation_id, result in active if result.match is not None]
         total_coverage = sum(coverage_values)
         coverage = min(max(total_coverage, 0), MarkdownSelector.MAX_COVERAGE)
@@ -798,10 +798,20 @@ class _SelectorTreeprocessor(Treeprocessor):
                 coverage,
             )
 
+        tooltip_lines = [f"Coverage: {coverage}%"]
+        for _annotation_id, result in sorted(active, key=operator.itemgetter(0)):
+            tooltip_lines.extend((
+                "",
+                f"File: {result.input_file}",
+                json.dumps(result.selector, ensure_ascii=False),
+            ))
+        tooltip_text = "\n".join(tooltip_lines)
+
         child: etree.Element | None = None
 
         for _annotation_id, result in sorted(active, reverse=True, key=operator.itemgetter(0)):
             span = self._annotation_span(result, text if child is None else "", coverage)
+            span.set("title", tooltip_text)
             if child is not None:
                 span.append(child)
             child = span
