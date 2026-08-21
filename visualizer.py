@@ -1071,8 +1071,8 @@ class Visualizer:
 .coverage {{
     background-color: color-mix(
         in oklch,
-        oklch(0.78 0.14 55) calc(100% - var(--coverage)),
-        oklch(0.76 0.12 142) var(--coverage)
+        oklch(0.55 0.12 55) calc(100% - var(--coverage)),
+        oklch(0.76 0.18 140) var(--coverage)
     );
 }}
 .coverage-full {{
