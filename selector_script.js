@@ -130,6 +130,8 @@ document.querySelectorAll("li").forEach((li) => {
       return;
     }
 
+    event.stopPropagation();
+
     highlightRange(selectedRange);
 
     const occurrence = getTextOccurrence(li, selectedText, selectedRange);
