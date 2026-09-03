@@ -301,8 +301,8 @@ def main():
     print("Details of loaded tests:")
     for i,t in enumerate(tests['converter_tests'], 1):
         if "is_testing" in t:
-            is_testing = ", ".join(t["is_testing"])
-            remark = f": {t["remark"]}" if "remark" in t else ""
+            is_testing = ", ".join([json.dumps(x, ensure_ascii=False) for x in t["is_testing"]])
+            remark = f": {t['remark']}" if "remark" in t else ""
             print(f"{i:2d}:", f"{is_testing}{remark}")
 
 if __name__ == "__main__":
