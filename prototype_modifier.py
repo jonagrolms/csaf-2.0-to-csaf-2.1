@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Be a dump CSAF 2.0 modifier that adds a simple `additional property`.
+"""Be a dumb CSAF 2.0 modifier that adds a simple `additional property`.
 
 Only allowed input is a valid CSAF 2.0 file.
   If a different input is given, output is invalid.
