@@ -1242,8 +1242,10 @@ def test_command(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
     """Resolve a selector and print its matched text.
 
     Raises:
-        OSError: If the Markdown file cannot be read.
-        UnicodeError: If the Markdown file is not valid UTF-8.
+        OSError: If an input file cannot be read.
+        UnicodeError: If an input file is not valid UTF-8.
+        json.JSONDecodeError: If the testcase file does not contain valid JSON.
+        ValueError: If the testcase revision is missing or is not configured.
         SystemExit: If required arguments are missing or mutually exclusive.
     """
     if args.file_option and args.file_positional:
@@ -1254,8 +1256,8 @@ def test_command(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
     file_path = args.file_option or args.file_positional
     selector_json = args.selector_option or args.selector_positional
 
-    if not file_path or not selector_json:
-        parser.error("Both a file and a selector must be provided for the 'test' command.")
+    if not selector_json:
+        parser.error("A selector must be provided for the 'test' command.")
 
     try:
         selector = json.loads(selector_json)
@@ -1264,10 +1266,20 @@ def test_command(args: argparse.Namespace, parser: argparse.ArgumentParser) -> N
     if not isinstance(selector, list):
         parser.error("Selector must be a JSON array.")
 
-    md_content = Path(file_path).read_text(encoding="utf-8")
+    if file_path:
+        md_content = Path(file_path).read_text(encoding="utf-8")
+        input_file = str(file_path)
+    else:
+        visualizer = Visualizer(args.revisions, Path(args.testcases))
+        revision = visualizer._testcase_revision()
+        md_content = get_revision_content(revision, args.revisions)
+        if not md_content:
+            sys.exit(1)
+        input_file = revision
+
     rendered = render_markdown_section(
         md_content,
-        [SelectorRequest(input_file=str(file_path), selector=selector)],
+        [SelectorRequest(input_file=input_file, selector=selector)],
     )
     result = rendered.selectors[0]
 
@@ -1333,8 +1345,8 @@ def interactive_selection_command(args: argparse.Namespace) -> None:
 
 def main() -> None:
     """Run the command-line interface."""
-    def add_testcase_visualization_arguments(parser: argparse.ArgumentParser) -> None:
-        """Add arguments shared by testcase-driven visualization commands."""
+    def add_testcase_revision_arguments(parser: argparse.ArgumentParser) -> None:
+        """Add arguments for resolving a revision from the testcase file."""
         parser.add_argument(
             "--revisions",
             type=json.loads,
@@ -1348,22 +1360,35 @@ def main() -> None:
             help="Path to the JSON file containing test cases",
             default="converter-testcases-20-21.json",
         )
+
+    def add_testcase_visualization_arguments(parser: argparse.ArgumentParser) -> None:
+        """Add arguments shared by testcase-driven visualization commands."""
+        add_testcase_revision_arguments(parser)
         parser.add_argument("--output", type=str, help="Path to the output directory", default="output")
 
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser(description="Visualizer")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    test_parser = subparsers.add_parser("test", help="Test a selector against a Markdown file")
-    test_parser.add_argument("file_positional", nargs="?", help="Path to the Markdown file to test against")
+    test_parser = subparsers.add_parser("test", help="Test a selector against a Markdown revision")
+    test_parser.add_argument(
+        "file_positional",
+        nargs="?",
+        help="Path to the Markdown file to test against; defaults to the testcase revision",
+    )
     test_parser.add_argument("selector_positional", nargs="?", help="Selector JSON array to test")
-    test_parser.add_argument("--file", dest="file_option", help="Path to the Markdown file to test against")
+    test_parser.add_argument(
+        "--file",
+        dest="file_option",
+        help="Path to the Markdown file to test against; defaults to the testcase revision",
+    )
     test_parser.add_argument(
         "--selector",
         "--locator",
         dest="selector_option",
         help="Selector JSON array to test",
     )
+    add_testcase_revision_arguments(test_parser)
 
     visualize_parser = subparsers.add_parser("visualize", help="Visualize selectors")
     add_testcase_visualization_arguments(visualize_parser)
